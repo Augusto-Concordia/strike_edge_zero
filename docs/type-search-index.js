@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","u":"allclasses-index.html"},{"p":"<Unnamed>","l":"Part2_A.GameDescriptor"},{"p":"<Unnamed>","l":"Part2_B.GameDescriptor"},{"p":"<Unnamed>","l":"Part2_A"},{"p":"<Unnamed>","l":"Part2_B"},{"p":"<Unnamed>","l":"Stack"}];updateSearchResults();

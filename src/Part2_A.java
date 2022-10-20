@@ -1,11 +1,43 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+//COMP 352 - Assignment #2, Part 2A
+//Due Date: October 30th
+//Written by: Augusto Mota Pinheiro (40208080)
+
+import java.io.*;
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * StrikeZeroEdge solver class for the recursive method.
+ */
 public class Part2_A {
+    /**
+     * Base class that describes a game. It's used for easier communication between methods.
+     * Structured as a data type, all its attributes are public (similar to structs in other languages).
+     */
+    private static class GameDescriptor {
+        /**
+         * Game dataset.
+         */
+        public int[] dataset;
+
+        /**
+         * Initial position of the game.
+         */
+        public int initialPosition;
+
+        /**
+         * Whether the game is solvable or not.
+         */
+        public boolean solvable;
+    }
+
+    /**
+     * Driver method for the recursive solution.
+     * @param args Command line arguments: input file name and output file name.
+     */
     public static void main(String[] args) {
+        //argument count check
         if (args.length < 2) {
             System.out.println("Not enough arguments, exiting...");
         }
@@ -15,35 +47,41 @@ public class Part2_A {
             return;
         }
 
+        //argument parsing
         String inFileName = args[0];
         String outFileName = args[1];
 
-        Scanner fileInScanner;
+        //input file parsing
+        GameDescriptor[] readGames = ReadInFile(inFileName);
 
-        try {
-            fileInScanner = new Scanner(new File(inFileName));
-        } catch (FileNotFoundException fileNotFoundException) {
-            System.out.println("Input file not found, exiting...");
-            return;
-        }
-
-        var readGames = ReadInFile(fileInScanner);
-
+        //solving
         for (int i = 0; i < readGames.length; i++) {
             readGames[i] = Solve(readGames[i]);
         }
+
+        //output file writing
+        WriteOutFile(outFileName, readGames);
     }
 
     /**
      * Reads input file and creates a GameDescriptor object for each game in the file.
      *
-     * @param fileScanner Scanner object to read the file.
+     * @param fileName The name of the input file.
      * @return An array of GameDescriptor objects.
      */
-    private static GameDescriptor[] ReadInFile(Scanner fileScanner) {
+    private static GameDescriptor[] ReadInFile(String fileName) {
+        Scanner fileScanner;
         GameDescriptor[] descriptors = new GameDescriptor[0];
 
         try {
+            fileScanner = new Scanner(new File(fileName));
+        } catch (FileNotFoundException fileNotFoundException) {
+            System.out.println("Input file not found, exiting...");
+            return new GameDescriptor[0];
+        }
+
+        try {
+            //reads the number of games in the file
             int gamesNumb = fileScanner.nextInt();
 
             descriptors = new GameDescriptor[gamesNumb];
@@ -75,15 +113,42 @@ public class Part2_A {
             System.out.println("Could not read input file, exiting...");
         }
 
+        fileScanner.close(); //for good measure
+
         return descriptors;
     }
 
-    private static void WriteOutFile(GameDescriptor[] descriptors){
+    /** Writes out the results of the games to the output file.
+     * @param fileName The desired name of the output file.
+     * @param descriptors The array of GameDescriptor objects to write out.
+     */
+    private static void WriteOutFile(String fileName, GameDescriptor[] descriptors) {
+        try {
+            File fileOut = new File(fileName);
 
+            if (!fileOut.exists()) {
+                fileOut.createNewFile();
+            }
+
+            PrintWriter fileWriter = new PrintWriter(fileOut);
+
+            for (GameDescriptor descriptor : descriptors) {
+                fileWriter.println(descriptor.solvable ? "1" : "0");
+                fileWriter.flush();
+            }
+
+            fileWriter.close();
+        } catch (SecurityException securityException) {
+            System.out.println("Denied access to the file, exiting...");
+        } catch (FileNotFoundException fileNotFoundException) {
+            System.out.println("Could not write to output file, exiting...");
+        } catch (IOException ioException) {
+            System.out.println("Could not create output file, exiting...");
+        }
     }
 
     /**
-     * Starts the solving algorithm with each game
+     * Starts the solving algorithm for each game.
      *
      * @param descriptor GameDescriptor object describing the game.
      * @return The same GameDescriptor object, with an updated resolvability flag.
@@ -93,7 +158,6 @@ public class Part2_A {
 
         return descriptor;
     }
-
 
     /**
      * Checks if the dataset is solvable.
