@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
- * StrikeZeroEdge solver class for the recursive method.
+ * StrikeZeroEdge solver class for the iterative method.
  */
 public class Part2_B {
     /**
@@ -33,7 +33,7 @@ public class Part2_B {
     }
 
     /**
-     * Driver method for the recursive solution.
+     * Driver method for the iterative solution.
      * @param args Command line arguments: input file name and output file name.
      */
     public static void main(String[] args) {
@@ -154,36 +154,40 @@ public class Part2_B {
      * @return The same GameDescriptor object, with an updated resolvability flag.
      */
     private static GameDescriptor Solve(GameDescriptor descriptor) {
-        descriptor.solvable = TrySolve(descriptor.dataset.clone(), descriptor.dataset[descriptor.initialPosition]);
+        descriptor.solvable = TrySolve(descriptor.dataset, descriptor.dataset[descriptor.initialPosition]);
 
         return descriptor;
     }
 
     /**
-     * Checks if the dataset is solvable.
+     * Iteratively checks if the dataset is solvable.
      *
      * @param dataset Integer array to be checked.
-     * @param sum     The signed sum of all moves
+     * @param sum     The signed sum of all moves.
      * @return True if the dataset is solvable; false otherwise.
      */
     private static boolean TrySolve(int[] dataset, int sum) {
-        //our current position is too large for the dataset or we've already been here: we've failed
-        if (sum >= dataset.length || dataset[sum] == -1) return false;
-        //if we reached the end of the dataset: we've succeeded
-        if (sum == dataset.length - 1) return true;
+        ArrayList<Integer> positionsToCheck = new ArrayList<>(dataset.length);
 
-        int move = dataset[sum];
-        int currentMove = 0;
+        //populate our array list with our indices
+        for (int i = 0; i < dataset.length; i++)
+            positionsToCheck.Add(i, dataset[i]);
 
-        if (sum + move < dataset.length) {
-            currentMove = move; //we're moving right peeps, because we're within bounds
-        } else if (sum - move >= 0) {
-            currentMove = -move; //we're moving left peeps, because we're within bounds
+        //keep moving the marker until we reach the end or an invalid index
+        while (positionsToCheck.Get(sum) != -1 && sum < positionsToCheck.Size() - 1) {
+            int move = positionsToCheck.Get(sum);
+            int currentMove = 0;
+
+            if (sum + move < positionsToCheck.Size()) {
+                currentMove = move; //we're moving right peeps, because we're within bounds
+            } else if (sum - move >= 0) {
+                currentMove = -move; //we're moving left peeps, because we're within bounds
+            }
+
+            positionsToCheck.Set(sum, -1); //invalidate this position
+            sum = sum + currentMove; //move to the next
         }
 
-        dataset[sum] = -1; //invalidate this position
-        sum = sum + currentMove;
-
-        return TrySolve(dataset, sum);
+        return sum == dataset.length - 1; //returns if we have reached the end (or not)
     }
 }

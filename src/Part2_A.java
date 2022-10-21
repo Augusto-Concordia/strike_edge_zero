@@ -160,14 +160,14 @@ public class Part2_A {
     }
 
     /**
-     * Checks if the dataset is solvable.
+     * Recursively checks if the dataset is solvable.
      *
      * @param dataset Integer array to be checked.
-     * @param sum     The signed sum of all moves
+     * @param sum     The signed sum of all moves.
      * @return True if the dataset is solvable; false otherwise.
      */
     private static boolean TrySolve(int[] dataset, int sum) {
-        //our current position is too large for the dataset or we've already been here: we've failed
+        //our current position is too large for the dataset, or we've already been here: we've failed
         if (sum >= dataset.length || dataset[sum] == -1) return false;
         //if we reached the end of the dataset: we've succeeded
         if (sum == dataset.length - 1) return true;
