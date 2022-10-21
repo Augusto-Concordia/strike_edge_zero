@@ -167,8 +167,8 @@ public class Part2_A {
      * @return True if the dataset is solvable; false otherwise.
      */
     private static boolean TrySolve(int[] dataset, int sum) {
-        //our current position is too large for the dataset, or we've already been here: we've failed
-        if (sum >= dataset.length || dataset[sum] == -1) return false;
+        //the initial sum is invalid or we've already been here: we've failed
+        if (sum <= 0 || dataset[sum] == Integer.MAX_VALUE) return false;
         //if we reached the end of the dataset: we've succeeded
         if (sum == dataset.length - 1) return true;
 
@@ -181,7 +181,7 @@ public class Part2_A {
             currentMove = -move; //we're moving left peeps, because we're within bounds
         }
 
-        dataset[sum] = -1; //invalidate this position
+        dataset[sum] = Integer.MAX_VALUE; //invalidate this position
         sum = sum + currentMove;
 
         return TrySolve(dataset, sum);

@@ -173,8 +173,8 @@ public class Part2_B {
         for (int i = 0; i < dataset.length; i++)
             positionsToCheck.Add(i, dataset[i]);
 
-        //keep moving the marker until we reach the end or an invalid index
-        while (positionsToCheck.Get(sum) != -1 && sum < positionsToCheck.Size() - 1) {
+        //keep moving the marker until we reach an invalid index (we looped or the initial sum is invalid)
+        while (sum > 0 && positionsToCheck.Get(sum) != Integer.MAX_VALUE) {
             int move = positionsToCheck.Get(sum);
             int currentMove = 0;
 
@@ -184,7 +184,7 @@ public class Part2_B {
                 currentMove = -move; //we're moving left peeps, because we're within bounds
             }
 
-            positionsToCheck.Set(sum, -1); //invalidate this position
+            positionsToCheck.Set(sum, Integer.MAX_VALUE); //invalidate this position
             sum = sum + currentMove; //move to the next
         }
 
